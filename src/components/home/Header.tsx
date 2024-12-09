@@ -3,28 +3,32 @@
 import { useState } from 'react'
 // import Image from 'next/image'
 // import Link from 'next/link'
-import { Search, PlusCircle, Settings, LogOut, Menu } from 'lucide-react'
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuTrigger 
+import { Search, PlusCircle, NotebookPenIcon, Settings, LogOut, Menu, User } from 'lucide-react'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Button } from "@/components/ui/button"
 import Sidebar from './Sidebar'
-import { useAppDispatch } from '@/Redux/hooks'
+import { useAppDispatch, useAppSelector } from '@/Redux/hooks'
 import { logout } from '@/Redux/slice/authSlice'
 import Cookies from 'js-cookie'
 import { persister } from '@/Redux/store'
 import { useNavigate } from 'react-router-dom'
+import { toast } from 'sonner'
+
 
 
 
 export default function Header() {
   const [searchQuery, setSearchQuery] = useState('')
   const dispatch = useAppDispatch();
-const navigate = useNavigate();
+  const navigate = useNavigate();
+  const user = useAppSelector((state) => state.auth?.user) ?? null;
+
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
@@ -32,13 +36,28 @@ const navigate = useNavigate();
     console.log('Searching for:', searchQuery)
   }
 
-  const handleLogout = ()=>{
-    console.log('working');
-    
-      dispatch(logout())
-      Cookies.remove('token');
-      persister.purge()
-      navigate('/');
+  const handleLogout = () => {
+
+    toast('Are you sure you want to Logout now?', {
+      action: {
+        label: 'Yes',
+        onClick:()=> confirmLogout()
+      },
+      cancel: {
+        label: 'No',
+        onClick: () => ''
+      },
+      duration: 4000,
+    });
+
+
+  }
+
+  const confirmLogout = ()=>{
+    dispatch(logout())
+    Cookies.remove('token');
+    persister.purge()
+    navigate('/');
   }
 
   return (
@@ -56,8 +75,8 @@ const navigate = useNavigate();
               <Sidebar />
             </SheetContent>
           </Sheet>
-          <a href="/" className="text-2xl font-bold text-gray-800">
-            Blog
+          <a href="/home" className="text-2xl font-sans font-extrabold text-gray-800">
+            Aura
           </a>
         </div>
 
@@ -76,30 +95,34 @@ const navigate = useNavigate();
           </div>
         </form>
 
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-8">
           <a href="/createBlog" className="text-gray-600 hover:text-gray-800">
-            <PlusCircle className="h-6 w-6" />
+            <NotebookPenIcon className="h-6 w-6 text-gray-800" />
           </a>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button className="rounded-full overflow-hidden">
-                <img
-                  src="/placeholder.svg?height=40&width=40&text=User"
-                  alt="User"
-                  width={40}
-                  height={40}
+                <User className="h-7 w-6 "
+                // src="/placeholder.svg?height=40&width=40&text=User"
+                // alt="User"
+                // width={40}
+                // height={40}
                 />
               </button>
-              
+
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
+              <DropdownMenuItem>
+                <User className="mr-2 h-4 w-4" />
+                <span>{user?.name}</span>
+              </DropdownMenuItem>
               <DropdownMenuItem>
                 <Settings className="mr-2 h-4 w-4" />
                 <span>Settings</span>
               </DropdownMenuItem>
               <DropdownMenuItem onClick={handleLogout}>
-                <LogOut  className="mr-2 h-4 w-4" />
-                <span >Logout</span>
+                <LogOut className="mr-2 h-4 w-4 text-red-700" />
+                <span className="mr-2 h-4 w-4 text-red-700" >Logout</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

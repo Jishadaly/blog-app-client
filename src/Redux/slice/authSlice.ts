@@ -1,18 +1,36 @@
 // src/features/auth/authSlice.js
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { loginUser , googleAuth } from '../services/authService';
 import Cookies from 'js-cookie';
+
+
+// Define the types for the user and auth state
+interface User {
+  id: string;
+  name: string;
+  email: string;
+}
+
+interface AuthState {
+  user: User | null;
+  token: string | null;
+  loading: boolean;
+  error: string | null;
+}
+
+// Initial state
+const initialState: AuthState = {
+  user: null,
+  token: null,
+  loading: false,
+  error: null,
+};
 
 
 
 const authSlice = createSlice({
   name: 'auth',
-  initialState: {
-    user: null,
-    token: null,
-    loading: false,
-    error: null,
-  },
+  initialState,
   reducers: {
     logout: (state) => {
       state.user = null;
@@ -26,7 +44,7 @@ const authSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(loginUser.fulfilled, (state:any, action) => {
+      .addCase(loginUser.fulfilled, (state:any, action: PayloadAction<{ user: User; token: string }>) => {
         console.log('state : ',action.payload);
         
         state.loading = false;

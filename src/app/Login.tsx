@@ -37,7 +37,7 @@ export default function LoginPage() {
         await dispatch(loginUser({ endpoint: '/login', userData: { email, password } }))
           .unwrap()
           .then(() => {
-            toast.success("User logged in successfully");
+            toast.success("Welcome to Aura!!");
             navigate('/home');
           })
           .catch((err: any) => {
@@ -67,7 +67,7 @@ export default function LoginPage() {
       dispatch(googleAuth({ endpoint: "/googleLogin", userData: userData }))
         .unwrap()
         .then(() => {
-          toast.success("User logged in successfully");
+          toast.success("Welcome to Aura!!");
           setIsLoading(false);
           navigate('/home');
         })

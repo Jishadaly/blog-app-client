@@ -61,7 +61,7 @@ export default function RegisterPage() {
       dispatch(googleAuth({ endpoint: "/googleLogin", userData: userData }))
         .unwrap()
         .then(() => {
-          toast.success("User logged in successfully");
+          toast.success("Welcome to Aura!!");
           setIsLoading(false);
           navigate('/home');
         })

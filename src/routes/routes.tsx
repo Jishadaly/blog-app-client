@@ -12,6 +12,7 @@ import {
 import { CreateBlog } from '@/app/blog/blogCreate.tsx';
 // import Header from '@/components/home/Header.tsx';
 import Layout from '@/components/layout/mainLayout.tsx';
+import { EditBlog } from '@/app/blog/updateBlog.tsx';
 
 
   const router = createBrowserRouter( 
@@ -25,6 +26,7 @@ import Layout from '@/components/layout/mainLayout.tsx';
           <Route index element={<Home/>} />
               <Route path='home' element={<Home/>}/>
               <Route path='createBlog' element={<CreateBlog/>} />
+              <Route path='updateBlog/:blogId' element={<EditBlog/>}/>
           </Route>
         </Route>
   

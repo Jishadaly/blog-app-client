@@ -1,39 +1,61 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { createBlog } from "@/api/servies/userService";
+import { updateBlog, getBlogDetails } from "@/api/servies/userService";
 import { toast } from "sonner";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const BlogSchema = Yup.object().shape({
     title: Yup.string().required("Title is required"),
-    image: Yup.mixed().required("Image is required"),
+    image: Yup.mixed(), // Optional for editing
     brief: Yup.string().required("Brief description is required"),
     content: Yup.string().required("Content is required"),
 });
 
-export function CreateBlog() {
+export function EditBlog() {
     const [imagePreview, setImagePreview] = useState<string | null>(null);
-    const navigate = useNavigate();
-
-    const initialValues = {
+    const [initialValues, setInitialValues] = useState({
         title: "",
         image: null,
         brief: "",
         content: "",
-    };
+    });
+    const navigate = useNavigate();
+    const { blogId } = useParams();
+    useEffect(() => {
+
+        const fetchBlogDetails = async () => {
+            try {
+                const { blog } = await getBlogDetails(`/getBlogDetails/?blogId=${blogId}`);
+                setInitialValues({
+                    title: blog.title,
+                    image: null,
+                    brief: blog.brief,
+                    content: blog.content,
+                });
+                if (blog.imageUrl) {
+                    setImagePreview(blog.imageUrl);
+                }
+            } catch (error) {
+                console.error("Error fetching blog details:", error);
+            }
+        };
+
+        fetchBlogDetails();
+    }, []);
 
     const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>, setFieldValue: any) => {
         const file = event.target.files?.[0];
         if (file) {
             setFieldValue("image", file);
             console.log("image", file);
+
 
             const reader = new FileReader();
             reader.onload = () => setImagePreview(reader.result as string);
@@ -46,48 +68,65 @@ export function CreateBlog() {
         setImagePreview(null);
     };
 
-    const handleSubmit = (values: typeof initialValues, { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }
+    const handleSubmit = (
+        values: typeof initialValues,
+        { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }
     ) => {
-        console.log(values); // Replace with API call
+        console.log("Submitting updated blog:", values);
 
-        const addedPost = new Promise((resolve, reject) => {
+        const updatedPost = new Promise((resolve, reject) => {
             const config = {
                 headers: {
-                    'Content-Type': 'multipart/form-data',
+                    "Content-Type": "multipart/form-data",
                 },
-            }
+            };
 
             setTimeout(() => {
-                createBlog('/createBlog', values, config)
+                updateBlog(`/updateBlog/?blogId=${blogId}`, values, config)
                     .then((data: any) => {
-                        console.log("blogdata", data);
-
-                        resolve({ message: "Your Blog is Published" });
+                        resolve({ message: "Your Blog has been updated" });
                         setSubmitting(false);
-                    }).catch((error) => {
+                    })
+                    .catch((error) => {
                         reject(error);
-                        setSubmitting(false)
+                        setSubmitting(false);
                     });
             }, 1500);
         });
 
-        toast.promise(addedPost, {
-            loading: 'Blog publishing..',
+        toast.promise(updatedPost, {
+            loading: "Updating blog...",
             success: (data: any) => {
-                navigate('/home');
-                return data.message
+                navigate("/home");
+                return data.message;
             },
-            error: 'Error publishing blog',
+            error: "Error updating blog",
         });
-
-      
     };
+
+
+    const handleCancelEdit = () => {
+        toast('Are you sure you want to cancel editing?', {
+          action: {
+            label: 'Yes',
+            onClick: () => navigate('/home'), // Replace with actual cancel logic
+          },
+          cancel:{
+            label:'No',
+            onClick:()=> ''
+          },
+          duration: 4000, 
+        });
+      };
+
+
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-gray-50 sm:p-5">
             <div className="w-full max-w-3xl p-8 bg-white rounded-md shadow-lg border border-gray-200">
-                <h1 className="text-2xl font-bold text-start mb-6">Create a New Blog</h1>
+                <h1 className="text-2xl font-bold text-start mb-6">Edit Blog</h1>
                 <Formik
+                    enableReinitialize
                     initialValues={initialValues}
                     validationSchema={BlogSchema}
                     onSubmit={handleSubmit}
@@ -107,7 +146,7 @@ export function CreateBlog() {
                             </div>
 
                             {/* Image Upload Field */}
-                            <div >
+                            <div>
                                 <Label className="block text-sm font-medium text-gray-700">Image</Label>
                                 <Input
                                     type="file"
@@ -161,9 +200,18 @@ export function CreateBlog() {
                             </div>
 
                             {/* Submit Button */}
-                            <Button type="submit" className="w-full" disabled={isSubmitting}>
-                                {isSubmitting ? "Submitting..." : "Create Blog"}
-                            </Button>
+                            <div>
+                                <Button type="submit" className="w-full " disabled={isSubmitting} >
+                                    {isSubmitting ? "Updating..." : "Update Blog"}
+                                </Button>
+
+                                <Button type="button" onClick={handleCancelEdit}  className="w-full mt-4 bg-gray-200  hover:bg-gray-400" disabled={isSubmitting} variant={"secondary"} color="gray" >
+                                    {/* {isSubmitting ? "Updating..." : "Update Blog"}
+                                     */}
+                                     Cancel
+                                </Button>
+                            </div>
+
                         </Form>
                     )}
                 </Formik>
