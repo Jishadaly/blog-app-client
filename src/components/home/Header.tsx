@@ -1,9 +1,6 @@
-'use client'
 
 import { useState } from 'react'
-// import Image from 'next/image'
-// import Link from 'next/link'
-import { Search, PlusCircle, NotebookPenIcon, Settings, LogOut, Menu, User } from 'lucide-react'
+import { Search, NotebookPenIcon, Settings, LogOut, Menu, User } from 'lucide-react'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,9 +17,6 @@ import { persister } from '@/Redux/store'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 
-
-
-
 export default function Header() {
   const [searchQuery, setSearchQuery] = useState('')
   const dispatch = useAppDispatch();
@@ -30,18 +24,12 @@ export default function Header() {
   const user = useAppSelector((state) => state.auth?.user) ?? null;
 
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault()
-    // Implement search functionality here
-    console.log('Searching for:', searchQuery)
-  }
-
   const handleLogout = () => {
 
     toast('Are you sure you want to Logout now?', {
       action: {
         label: 'Yes',
-        onClick:()=> confirmLogout()
+        onClick: () => confirmLogout()
       },
       cancel: {
         label: 'No',
@@ -53,7 +41,7 @@ export default function Header() {
 
   }
 
-  const confirmLogout = ()=>{
+  const confirmLogout = () => {
     dispatch(logout())
     Cookies.remove('token');
     persister.purge()
@@ -80,7 +68,7 @@ export default function Header() {
           </a>
         </div>
 
-        <form onSubmit={handleSearch} className="hidden sm:flex flex-1 max-w-md mx-4">
+        <form className="hidden sm:flex flex-1 max-w-md mx-4">
           <div className="relative">
             <input
               type="text"

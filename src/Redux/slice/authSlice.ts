@@ -4,7 +4,7 @@ import { loginUser , googleAuth } from '../services/authService';
 import Cookies from 'js-cookie';
 
 
-// Define the types for the user and auth state
+
 interface User {
   id: string;
   name: string;
@@ -18,7 +18,7 @@ interface AuthState {
   error: string | null;
 }
 
-// Initial state
+
 const initialState: AuthState = {
   user: null,
   token: null,

@@ -4,13 +4,12 @@ import {
     createBrowserRouter,
     createRoutesFromElements,
   } from 'react-router-dom'
-  import LoginPage from '@/app/Login';// Adjust the import paths accordingly
+  import LoginPage from '@/app/Login';
   import RegisterPage from '@/app/Register';
   import OTPPage from '@/app/otp/page';
   import Home from '@/app/home/Home';
   import Protected from './protectedRoute.tsx';
 import { CreateBlog } from '@/app/blog/blogCreate.tsx';
-// import Header from '@/components/home/Header.tsx';
 import Layout from '@/components/layout/mainLayout.tsx';
 import { EditBlog } from '@/app/blog/updateBlog.tsx';
 

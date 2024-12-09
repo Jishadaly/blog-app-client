@@ -3,7 +3,6 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import Cookies from 'js-cookie';
 
 
-// Define the structure of the arguments and response
 interface LoginArgs {
     endpoint: string;
     userData: {
@@ -13,7 +12,7 @@ interface LoginArgs {
   }
   
   interface LoginResponse {
-    user: any; // Replace `any` with the actual user object type if known
+    user: any; 
     token: string;
   }
 

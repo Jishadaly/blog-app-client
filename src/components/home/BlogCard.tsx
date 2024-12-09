@@ -1,5 +1,3 @@
-// import Image from 'next/image'
-
 import { MoreVertical } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import {
@@ -14,10 +12,8 @@ import { IBlogPost } from '@/types/Blogtype'
 import { toast } from 'sonner'
 
 export default function BlogCard({ post, deleteBlog }: { post: IBlogPost, deleteBlog: any }) {
+
   const userId = useAppSelector((state) => state.auth?.user?.id) ?? null;
-
-
-
   const navigate = useNavigate();
 
   const handleEdit = () => {
@@ -28,7 +24,7 @@ export default function BlogCard({ post, deleteBlog }: { post: IBlogPost, delete
     toast('Are you sure you want to delete post?', {
       action: {
         label: 'Yes',
-        onClick:()=> deleteBlog(post._id)
+        onClick: () => deleteBlog(post._id)
       },
       cancel: {
         label: 'No',
@@ -36,7 +32,6 @@ export default function BlogCard({ post, deleteBlog }: { post: IBlogPost, delete
       },
       duration: 4000,
     });
-    // deleteBlog(post._id);
   }
 
   return (
@@ -59,7 +54,7 @@ export default function BlogCard({ post, deleteBlog }: { post: IBlogPost, delete
         </div>
         <div className="flex items-center justify-between">
           <div className="flex space-x-2">
-            {post.tags.map((tag:any, index:number) => (
+            {post.tags.map((tag: any, index: number) => (
               <span key={index} className="bg-gray-200 text-gray-700 px-2 py-1 rounded-full text-xs">
                 {tag}
               </span>
@@ -84,10 +79,8 @@ export default function BlogCard({ post, deleteBlog }: { post: IBlogPost, delete
               <DropdownMenuItem>Share</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-            :
-            ''
+            : ''
         }
-
       </div>
     </div>
   )
