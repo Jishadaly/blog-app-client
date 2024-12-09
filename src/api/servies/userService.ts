@@ -14,3 +14,8 @@ export const verifyOTP = async (endPoint:string, data:any) => {
     const response = await authInstanceAxios.get(`${endPoint}?email=${email}`,);
     return response
   }
+
+  export const createBlog = async (endPoint:string, datas:any, config:any) => {
+    const response = await authInstanceAxios.post(`${endPoint}`, datas, config);
+    return response.data
+  }

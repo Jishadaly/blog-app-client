@@ -7,6 +7,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { createBlog } from "@/api/servies/userService";
+import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 const BlogSchema = Yup.object().shape({
     title: Yup.string().required("Title is required"),
@@ -17,6 +20,7 @@ const BlogSchema = Yup.object().shape({
 
 export function CreateBlog() {
     const [imagePreview, setImagePreview] = useState<string | null>(null);
+    const navigate = useNavigate();
 
     const initialValues = {
         title: "",
@@ -29,6 +33,8 @@ export function CreateBlog() {
         const file = event.target.files?.[0];
         if (file) {
             setFieldValue("image", file);
+            console.log("image", file);
+
             const reader = new FileReader();
             reader.onload = () => setImagePreview(reader.result as string);
             reader.readAsDataURL(file);
@@ -40,8 +46,40 @@ export function CreateBlog() {
         setImagePreview(null);
     };
 
-    const handleSubmit = (values: typeof initialValues) => {
+    const handleSubmit = (values: typeof initialValues, { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }
+    ) => {
         console.log(values); // Replace with API call
+
+        const addedPost = new Promise((resolve, reject) => {
+            const config = {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            }
+
+            setTimeout(() => {
+                createBlog('/createBlog', values, config)
+                    .then((data: any) => {
+                        console.log("blogdata", data);
+
+                        resolve({ message: "Your Blog is Published" });
+                        setSubmitting(false);
+                    }).catch((error) => {
+                        reject(error);
+                        setSubmitting(false)
+                    });
+            }, 1500);
+        });
+
+        toast.promise(addedPost, {
+            loading: 'Blog publishing..',
+            success: (data: any) => {
+                navigate('/home');
+                return data.message
+            },
+            error: 'Error publishing blog',
+        });
+
         alert("Blog Created Successfully!");
     };
 
