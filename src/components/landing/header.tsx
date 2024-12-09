@@ -23,16 +23,20 @@
 // }
 
 import { useState } from "react";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
+import { useAppSelector } from "@/Redux/hooks";
+
 
 export default function Header() {
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  // const [isDarkMode, setIsDarkMode] = useState(false);
 
-  const toggleTheme = () => {
-    const root = document.documentElement;
-    root.classList.toggle("dark", !isDarkMode); // Toggle 'dark' class
-    setIsDarkMode(!isDarkMode); // Update state
-  };
+  // const toggleTheme = () => {
+  //   const root = document.documentElement;
+  //   root.classList.toggle("dark", !isDarkMode); // Toggle 'dark' class
+  //   setIsDarkMode(!isDarkMode); // Update state
+  // };
+
+  const user = useAppSelector((state) => state.auth.user)
 
 
   return (
@@ -48,12 +52,18 @@ export default function Header() {
         </nav>
       </div>
       <div className="flex items-center space-x-4">
-        <Button onClick={toggleTheme} variant="default">{!isDarkMode ? 'dark' : 'light'}  </Button>
-        <Button variant="outline" className="rounded-lg" >
+        {/* <Button onClick={toggleTheme} variant="default">{!isDarkMode ? 'dark' : 'light'}  </Button> */}
+
+        {
+         user ? (<Button variant="outline" className="rounded-lg" >
+            <a href="/login">Sign up</a>
+          </Button>) : (<Button variant="outline" className="rounded-lg" >
             <a href="/login">Log in</a>
-        </Button>
+          </Button>)
+        }
+
         <Button className="bg-primary text-primary-foreground hover:bg-primary/90 px-4 py-2 rounded-md">
-          Get Started
+          <a href="/home"> Get Started</a>
         </Button>
       </div>
     </header>

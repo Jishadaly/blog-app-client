@@ -4,50 +4,83 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { useFormik } from "formik";
-import { loginValidationSchema } from "@/validation/loginValidaiton";
+import { loginValidationSchema } from "@/utils/validation/loginValidaiton";
+import { useNavigate } from "react-router-dom";
+import { googleAuth, loginUser } from "@/Redux/services/authService";
+import { toast } from "sonner";
+import { useAppDispatch } from "@/Redux/hooks";
+import { signInWithPopup } from 'firebase/auth';
+import {auth , provider} from '../utils/fireBase/config'
+
+
 
 
 export default function LoginPage() {
-    const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
-    // Formik setup
-    const formik = useFormik({
-      initialValues: {
-        email: "",
-        password: "",
-      },
-      validationSchema: loginValidationSchema,
-      onSubmit: async (values) => {
-        alert(values)
-        setIsLoading(true);
-        try {
-          // Simulate API call
-          await new Promise((resolve) => setTimeout(resolve, 1000));
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  // const { error } = useAppSelector((state) => state.auth);
 
-
-          
-        } catch (error: any) {
-          formik.setErrors({ email: "Login failed. Try again." });
-        } finally {
-          setIsLoading(false);
-        }
-      },
-    });
-  
-    const handleGoogleLogin = async (): Promise<void> => {
+  // Formik setup
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+    },
+    validationSchema: loginValidationSchema,
+    onSubmit: async (values) => {
       setIsLoading(true);
-  
       try {
-        // Simulate Google login logic
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        alert("Google login successful!");
-      } catch (error) {
-        formik.setErrors({ email: "Google login failed." });
+
+        const { email, password } = values;
+        await dispatch(loginUser({ endpoint: '/login', userData: { email, password } }))
+          .unwrap()
+          .then(() => {
+            toast.success("User logged in successfully");
+            navigate('/home');
+          })
+          .catch((err: any) => {
+            console.error("ererrer", err)
+            toast.error(err)
+          }
+          )
+      } catch (error: any) {
+        formik.setErrors({ email: "Login failed. Try again." });
       } finally {
         setIsLoading(false);
       }
-    };
-  
+    },
+  });
+
+  const handleGoogleLogin = async (): Promise<void> => {
+    setIsLoading(true);
+
+    await signInWithPopup(auth, provider).then((data) => {
+ 
+      const userData = {
+        name: data.user.displayName,
+        email: data.user.email,
+        profilePic: data.user.photoURL
+      }
+      
+      dispatch(googleAuth({ endpoint: "/googleLogin", userData: userData }))
+        .unwrap()
+        .then(() => {
+          toast.success("User logged in successfully");
+          setIsLoading(false);
+          navigate('/home');
+        })
+        .catch((err:any) => {
+          console.error(err)
+          setIsLoading(false);
+          formik.setErrors({ email: "Google login failed." });
+          toast.error("google authentication failed please try again")
+        }
+        );
+    });
+  };
+
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
@@ -57,7 +90,7 @@ export default function LoginPage() {
           <CardDescription>Enter your credentials to access your account</CardDescription>
         </CardHeader>
         <CardContent>
-        <form onSubmit={formik.handleSubmit}>
+          <form onSubmit={formik.handleSubmit}>
             <div className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>

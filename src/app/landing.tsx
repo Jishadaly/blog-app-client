@@ -25,12 +25,12 @@
 // }
 
 
-import Header from '@/components/header';
-import Hero from '@/components/hero';
-import Features from '@/components/features';
-import Testimonials from '@/components/testimonials';
-import CTA from '@/components/cta';
-import Footer from '@/components/footer';
+import Header from '@/components/landing/header';
+import Hero from '@/components/landing/hero';
+import Features from '@/components/landing/features';
+import Testimonials from '@/components/landing/testimonials';
+import CTA from '@/components/landing/cta';
+import Footer from '@/components/layout/footer';
 
 export default function LandingPage() {
   return (
@@ -38,13 +38,13 @@ export default function LandingPage() {
       <Header />
       <main className="flex-1">
         <Hero />
-        <div className="h-16" aria-hidden="true" />
+        {/* <div className="h-16" aria-hidden="true" />
         <Features />
         <div className="h-1" aria-hidden="true" />
         <Testimonials />
         <div className="h-16" aria-hidden="true" />
         <CTA />
-        <div className="h-16" aria-hidden="true" />
+        <div className="h-16" aria-hidden="true" /> */}
       </main>
       <Footer />
     </div>

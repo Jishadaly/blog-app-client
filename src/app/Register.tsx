@@ -4,10 +4,20 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { useFormik } from "formik";
-import { registerValidationSchema } from "@/validation/registerValidation";
+import { registerValidationSchema } from "@/utils/validation/registerValidation";
+import { userRegister } from "@/api/servies/userService";
+import { useNavigate } from "react-router-dom";
+import { signInWithPopup } from 'firebase/auth';
+import { auth, provider } from '../utils/fireBase/config'
+import { toast } from "sonner";
+import { useAppDispatch } from "@/Redux/hooks";
+import { googleAuth } from "@/Redux/services/authService";
 
 export default function RegisterPage() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+
 
   // Formik setup
   const formik = useFormik({
@@ -19,18 +29,52 @@ export default function RegisterPage() {
     },
     validationSchema: registerValidationSchema,
     onSubmit: async (values) => {
-      alert(JSON.stringify(values, null, 2));
       setIsLoading(true);
       try {
-        // Simulate API call
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+
+
+        await userRegister('/register', values);
+        toast.success('registration success')
+        const { email } = values
+        navigate('/otp', { state: { email } });
+        setIsLoading(false);
       } catch (error: any) {
         formik.setErrors({ email: "Registration failed. Try again." });
+        toast.info(error.response.data)
       } finally {
         setIsLoading(false);
       }
     },
   });
+
+  const handleGoogleLogin = async (): Promise<void> => {
+    setIsLoading(true);
+
+    await signInWithPopup(auth, provider).then((data) => {
+
+      const userData = {
+        name: data.user.displayName,
+        email: data.user.email,
+        profilePic: data.user.photoURL
+      }
+
+      dispatch(googleAuth({ endpoint: "/googleLogin", userData: userData }))
+        .unwrap()
+        .then(() => {
+          toast.success("User logged in successfully");
+          setIsLoading(false);
+          navigate('/home');
+        })
+        .catch((err: any) => {
+          console.error(err)
+          setIsLoading(false);
+          formik.setErrors({ email: "Google login failed." });
+          toast.error("google authentication failed please try again")
+        }
+        );
+    });
+  };
+
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
@@ -115,12 +159,18 @@ export default function RegisterPage() {
             </Button>
           </form>
         </CardContent>
-        <CardFooter className="text-sm text-center">
-          Already have an account?{" "}
-          <a href="/login" className="text-blue-500 hover:underline">
-            Login here
-          </a>
+        <CardFooter className="flex flex-col space-y-4">
+          <Button variant="outline" className="w-full" onClick={handleGoogleLogin} disabled={isLoading}>
+            {isLoading ? "Loading..." : "Login with Google"}
+          </Button>
+          <div className="text-sm text-center">
+            Already have an account?{" "}
+            <a href="/login" className="text-blue-500 hover:underline">
+              Login here
+            </a>
+          </div>
         </CardFooter>
+
       </Card>
     </div>
   );
