@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import BlogCard from './BlogCard'
-import { useInView } from 'react-intersection-observer'
+// import { useInView } from 'react-intersection-observer'
 import { getBlogs, removeBlog } from '@/api/servies/userService'
 import { IBlogPost } from '@/types/Blogtype'
 

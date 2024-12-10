@@ -48,7 +48,7 @@ export function CreateBlog() {
 
     const handleSubmit = (values: typeof initialValues, { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }
     ) => {
-        console.log(values); // Replace with API call
+        console.log(values); 
 
         const addedPost = new Promise((resolve, reject) => {
             const config = {
@@ -94,7 +94,7 @@ export function CreateBlog() {
                 >
                     {({ isSubmitting, setFieldValue }) => (
                         <Form className="space-y-6">
-                            {/* Title Field */}
+                          
                             <div>
                                 <label className="block text-sm font-medium text-gray-700">Title</label>
                                 <Field
@@ -106,7 +106,7 @@ export function CreateBlog() {
                                 <ErrorMessage name="title" component="div" className="text-red-500 text-sm" />
                             </div>
 
-                            {/* Image Upload Field */}
+                           
                             <div >
                                 <Label className="block text-sm font-medium text-gray-700">Image</Label>
                                 <Input
@@ -136,7 +136,7 @@ export function CreateBlog() {
                                 )}
                             </div>
 
-                            {/* Brief Description Field */}
+                         
                             <div>
                                 <label className="block text-sm font-medium text-gray-700">Brief Description</label>
                                 <Field
@@ -148,7 +148,7 @@ export function CreateBlog() {
                                 <ErrorMessage name="brief" component="div" className="text-red-500 text-sm" />
                             </div>
 
-                            {/* Main Content Field */}
+                           
                             <div>
                                 <label className="block text-sm font-medium text-gray-700">Main Content</label>
                                 <Field
@@ -160,7 +160,7 @@ export function CreateBlog() {
                                 <ErrorMessage name="content" component="div" className="text-red-500 text-sm" />
                             </div>
 
-                            {/* Submit Button */}
+                           
                             <Button type="submit" className="w-full" disabled={isSubmitting}>
                                 {isSubmitting ? "Submitting..." : "Create Blog"}
                             </Button>

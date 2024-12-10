@@ -13,7 +13,7 @@ import { useNavigate, useParams } from "react-router-dom";
 
 const BlogSchema = Yup.object().shape({
     title: Yup.string().required("Title is required"),
-    image: Yup.mixed(), // Optional for editing
+    image: Yup.mixed(), 
     brief: Yup.string().required("Brief description is required"),
     content: Yup.string().required("Content is required"),
 });
@@ -85,6 +85,8 @@ export function EditBlog() {
                 updateBlog(`/updateBlog/?blogId=${blogId}`, values, config)
                     .then((data: any) => {
                         resolve({ message: "Your Blog has been updated" });
+                        console.log(data);
+                        
                         setSubmitting(false);
                     })
                     .catch((error) => {
@@ -109,7 +111,7 @@ export function EditBlog() {
         toast('Are you sure you want to cancel editing?', {
           action: {
             label: 'Yes',
-            onClick: () => navigate('/home'), // Replace with actual cancel logic
+            onClick: () => navigate('/home'), 
           },
           cancel:{
             label:'No',
@@ -133,7 +135,7 @@ export function EditBlog() {
                 >
                     {({ isSubmitting, setFieldValue }) => (
                         <Form className="space-y-6">
-                            {/* Title Field */}
+                          
                             <div>
                                 <label className="block text-sm font-medium text-gray-700">Title</label>
                                 <Field
@@ -145,7 +147,7 @@ export function EditBlog() {
                                 <ErrorMessage name="title" component="div" className="text-red-500 text-sm" />
                             </div>
 
-                            {/* Image Upload Field */}
+                         
                             <div>
                                 <Label className="block text-sm font-medium text-gray-700">Image</Label>
                                 <Input
@@ -175,7 +177,7 @@ export function EditBlog() {
                                 )}
                             </div>
 
-                            {/* Brief Description Field */}
+                           
                             <div>
                                 <label className="block text-sm font-medium text-gray-700">Brief Description</label>
                                 <Field
@@ -187,7 +189,7 @@ export function EditBlog() {
                                 <ErrorMessage name="brief" component="div" className="text-red-500 text-sm" />
                             </div>
 
-                            {/* Main Content Field */}
+                           
                             <div>
                                 <label className="block text-sm font-medium text-gray-700">Main Content</label>
                                 <Field
@@ -199,15 +201,13 @@ export function EditBlog() {
                                 <ErrorMessage name="content" component="div" className="text-red-500 text-sm" />
                             </div>
 
-                            {/* Submit Button */}
+                           
                             <div>
                                 <Button type="submit" className="w-full " disabled={isSubmitting} >
                                     {isSubmitting ? "Updating..." : "Update Blog"}
                                 </Button>
 
                                 <Button type="button" onClick={handleCancelEdit}  className="w-full mt-4 bg-gray-200  hover:bg-gray-400" disabled={isSubmitting} variant={"secondary"} color="gray" >
-                                    {/* {isSubmitting ? "Updating..." : "Update Blog"}
-                                     */}
                                      Cancel
                                 </Button>
                             </div>

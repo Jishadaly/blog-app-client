@@ -41,7 +41,7 @@ export default function OTPPage() {
             console.log(enteredOtp);
             
             const data = { otp:enteredOtp , email }
-            const response = await verifyOTP('/verifyOTP', data);
+             await verifyOTP('/verifyOTP', data);
             setSuccess(true);
             setError('')
             // Redirect to the blog homepage or dashboard after successful verification

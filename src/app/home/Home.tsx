@@ -1,4 +1,3 @@
-import Header from '@/components/home/Header'
 import BlogList from '@/components/home/BlogList'
 import Sidebar from '@/components/home/Sidebar'
 
